@@ -20,7 +20,7 @@ const resolvers = {
   },
   ProductVariant: {
     async media(parent, args, context, info) {
-      return parent.media?parent.media:[];
+      return parent.media ? parent.media : [];
     },
   },
 };
@@ -31,9 +31,7 @@ function myStartup1(context) {
 
   if (app.expressApp) {
     // enable files upload
-    app.expressApp.use(
-      fileUpload()
-    );
+    app.expressApp.use(fileUpload());
 
     //add other middleware
     app.expressApp.use(cors());
@@ -41,10 +39,10 @@ function myStartup1(context) {
     app.expressApp.use(bodyParser.urlencoded({ extended: true }));
     app.expressApp.use(morgan("dev"));
     app.expressApp.post("/upload", async (req, res) => {
-console.log("req.body",req.body)
-console.log("req.files",req.files)
-      let isMulti=req.body.isMulti;
-      let uploadPath=req.body.uploadPath;
+      console.log("req.body", req.body);
+      console.log("req.files", req.files);
+      let isMulti = req.body.isMulti;
+      let uploadPath = req.body.uploadPath;
 
       let uploads = [];
       try {
@@ -53,7 +51,7 @@ console.log("req.files",req.files)
             status: false,
             message: "No file uploaded",
           });
-        } else if(isMulti=='true') {
+        } else if (isMulti == "true") {
           let data = [];
 
           //loop all files
@@ -61,12 +59,13 @@ console.log("req.files",req.files)
             let photo = req.files.photos[key];
             let promise = S3Upload(
               req.files.photos[key].data,
-              "userProducts/" + req.files.photos[key].name,key
+              "userProducts/" + req.files.photos[key].name,
+              key
             ).then((uploadResponse) => {
               console.log("upload resposne", uploadResponse);
-            if(uploadResponse["key"]){
-              data[uploadResponse["key"]].url=uploadResponse.url
-            }  
+              if (uploadResponse["key"]) {
+                data[uploadResponse["key"]].url = uploadResponse.url;
+              }
             });
             uploads.push(promise);
             //push file details
@@ -90,31 +89,29 @@ console.log("req.files",req.files)
               res.send(err);
             });
           //return response
-        }else if(isMulti=='false'){
+        } else if (isMulti == "false") {
           let data = [];
 
-             //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
-             let photo = req.files.photos;
-             data.push({
-              name: photo.name,
-              mimetype: photo.mimetype,
-              size: photo.size,
-            });
+          //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+          let photo = req.files.photos;
+          data.push({
+            name: photo.name,
+            mimetype: photo.mimetype,
+            size: photo.size,
+          });
           S3Upload(
-              req.files.photos.data,
-              uploadPath + req.files.photos.name,0
-            ).then((uploadResponse) => {
-            
-              data[0].url=uploadResponse.url
-             
+            req.files.photos.data,
+            uploadPath + req.files.photos.name,
+            0
+          ).then((uploadResponse) => {
+            data[0].url = uploadResponse.url;
+
             res.send({
               status: true,
-              message: 'File is uploaded',
-              data
-          });
+              message: "File is uploaded",
+              data,
             });
- 
-          
+          });
         }
       } catch (err) {
         console.lofg("err", err);
@@ -224,7 +221,7 @@ async function S3PublishMedia(
       const productVariant = variants.find(
         (variant) => variant._id === catalogVariant.variantId
       );
-      catalogVariant.uploadedBy = productVariant.uploadedBy || null;
+      // catalogVariant.uploadedBy = productVariant.uploadedBy || null;
       catalogVariant.ancestorId = productVariant["ancestors"][0]
         ? productVariant["ancestors"][0]
         : null;
