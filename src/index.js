@@ -11,7 +11,6 @@ import S3Upload from "./utils/s3Upload.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
-
 const resolvers = {
   Product: {
     async media(parent, args, context, info) {
@@ -238,7 +237,7 @@ async function S3PublishMedia(
 export default async function register(app) {
   await app.registerPlugin({
     label: "Image to S3",
-    name: "images-S3",
+    name: "ImageUpload",
     version: pkg.version,
     functionsByType: {
       startup: [myStartup1],
