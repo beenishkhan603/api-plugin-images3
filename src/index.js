@@ -38,6 +38,7 @@ function myStartup1(context) {
     app.expressApp.use(bodyParser.urlencoded({ extended: true }));
     app.expressApp.use(morgan("dev"));
     app.expressApp.post("/upload", async (req, res) => {
+      console.log("upload api hit");
       console.log("req.body", req.body);
       console.log("req.files", req.files);
       let isMulti = req.body.isMulti;
